@@ -11,6 +11,10 @@ import { CONFIG, withParams } from './config';
 import {
   availableChoices,
   buildSchedule,
+  canRepair,
+  cleanDust,
+  harvest,
+  useSpare,
   createMission,
   eligibleRandomEvents,
   resolveEvent,
@@ -668,5 +672,37 @@ describe('cargo plan (Radar check)', () => {
   it('warns when there is no storm cover at all', () => {
     expect(planCargo({ reactor: 1 }).issues.some((i) => i.kind === 'cover')).toBe(true);
     expect(planCargo({ reactor: 1, shelter: 1 }).issues.some((i) => i.kind === 'cover')).toBe(false);
+  });
+});
+
+describe('maintenance actions', () => {
+  it('a spare part repairs a damaged solar field or a broken recycler at any time', () => {
+    const s = mk({ solar: 2, recycler: 1, reactor: 1, spare: 2 });
+    expect(canRepair(s, 'solar')).toBe(false);
+    s.effects.meteoroid = true;
+    s.systems.recycler.broken = true;
+    s.effects.rationDays = 2;
+    expect(useSpare(s, 'solar')).toBe(true);
+    expect(useSpare(s, 'recycler')).toBe(true);
+    expect(s.spares).toBe(0);
+    expect(s.effects.meteoroid).toBe(false);
+    expect(s.systems.recycler.broken).toBe(false);
+    expect(s.effects.rationDays).toBe(0);
+    s.effects.meteoroid = true;
+    expect(useSpare(s, 'solar')).toBe(false); // no spare left
+  });
+  it('cleaning removes dust for a small morale cost; harvest needs grown plants', () => {
+    const s = mk({ reactor: 1, greenhouse: 1, watertank: 4, solar: 1 });
+    expect(cleanDust(s)).toBe(false);
+    s.effects.dust = true;
+    const m = s.morale;
+    expect(cleanDust(s)).toBe(true);
+    expect(s.morale).toBe(m - 2);
+    expect(harvest(s)).toBe(false);
+    s.greenhouseGrowth = 10;
+    const m2 = s.morale;
+    expect(harvest(s)).toBe(true);
+    expect(s.morale).toBe(m2 + 3);
+    expect(harvest(s)).toBe(false); // cooldown
   });
 });

@@ -112,7 +112,7 @@ export function PackScreen() {
     <main className="screen pack">
       <div className="top-row">
         <button className="btn ghost" onClick={() => setState({ screen: 'briefing' })}>
-          ← {t('common.back')}
+          <span className="arr">←</span> {t('common.back')}
         </button>
         <h2 className="pack-title">{t('pack.title')}</h2>
         <LangToggle />

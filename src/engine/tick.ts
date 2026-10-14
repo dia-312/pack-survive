@@ -231,6 +231,7 @@ export function tick(s: MissionState, cfg: Config = CONFIG): DayLog {
     fx.moldCutDays = Math.max(0, fx.moldCutDays - 1);
     fx.airflowDays = Math.max(0, fx.airflowDays - 1);
     fx.powerSaveDays = Math.max(0, fx.powerSaveDays - 1);
+    s.harvestCooldown = Math.max(0, s.harvestCooldown - 1);
     fx.restDay = false;
     fx.videoCall = false;
     fx.stormProtection = null;

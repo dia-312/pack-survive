@@ -223,6 +223,7 @@ export interface MissionState {
   science: number;
   systems: Record<SystemId, SystemState>;
   greenhouseGrowth: number;
+  harvestCooldown: number;
   effects: Effects;
   schedule: Schedule;
   pending: EventId | null;

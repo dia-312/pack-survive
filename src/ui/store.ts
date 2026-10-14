@@ -19,7 +19,8 @@ export type ModuleId =
 export type Overlay =
   | { kind: 'module'; id: ModuleId }
   | { kind: 'card'; event: EventId; phase: 'ask' | 'result'; choice?: string; text?: string }
-  | { kind: 'menu' };
+  | { kind: 'menu' }
+  | { kind: 'ending' };
 
 export interface Toast {
   id: number;
@@ -88,16 +89,27 @@ export function persist(): void {
 
 function initialLang(): Lang {
   try {
+    const q = new URLSearchParams(window.location.search).get('lang');
+    if (q === 'ar' || q === 'en') return q;
     return navigator.language?.toLowerCase().startsWith('ar') ? 'ar' : 'en';
   } catch {
     return 'en';
   }
 }
 
+function initialLangOverride(): Lang | null {
+  try {
+    const q = new URLSearchParams(window.location.search).get('lang');
+    return q === 'ar' || q === 'en' ? q : null;
+  } catch {
+    return null;
+  }
+}
+
 const saved = loadPersisted();
 let state: UIState = {
   screen: 'start',
-  lang: saved.lang ?? initialLang(),
+  lang: initialLangOverride() ?? saved.lang ?? initialLang(),
   scientist: saved.scientist ?? false,
   easy: saved.easy ?? true,
   cargo: {},
@@ -141,6 +153,8 @@ export const isPaused = (s: UIState = state): boolean =>
 let toastId = 1;
 export function pushToast(t: Omit<Toast, 'id'>): void {
   const id = toastId++;
+  // the same message twice in a row is just noise
+  if (state.toasts.some((x) => x.key === t.key)) return;
   setState({ toasts: [...state.toasts.slice(-3), { ...t, id }] });
   setTimeout(() => setState({ toasts: state.toasts.filter((x) => x.id !== id) }), 5200);
 }

@@ -358,3 +358,21 @@ export const CREW_COLORS: Record<string, string> = {
   omar: C.green,
   maya: '#B58BD9',
 };
+
+export function HabitatIcon({ size = 48 }: { size?: number }) {
+  return (
+    <Svg size={size}>
+      <rect x="6" y="26" width="36" height="14" rx="4" fill={C.cream} stroke={C.navy} strokeWidth="2" />
+      <path d="M8 26 A16 16 0 0 1 40 26 Z" fill={C.cream} stroke={C.navy} strokeWidth="2" />
+      <circle cx="17" cy="21" r="3" fill={C.lblue} stroke={C.navy} strokeWidth="1.5" />
+      <circle cx="31" cy="21" r="3" fill={C.lblue} stroke={C.navy} strokeWidth="1.5" />
+      <rect x="20" y="29" width="8" height="11" rx="3" fill={C.navy} />
+    </Svg>
+  );
+}
+
+export function ModuleIcon({ id, size = 48 }: { id: string; size?: number }) {
+  if (id === 'habitat') return <HabitatIcon size={size} />;
+  if (id === 'cargo') return <ItemIcon id="food" size={size} />;
+  return <ItemIcon id={id as ItemId} size={size} />;
+}

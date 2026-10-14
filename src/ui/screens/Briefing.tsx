@@ -20,7 +20,7 @@ export function Briefing() {
       <div className="starfield" aria-hidden="true" />
       <div className="top-row">
         <button className="btn ghost" onClick={() => setState({ screen: 'start' })}>
-          ← {t('common.back')}
+          <span className="arr">←</span> {t('common.back')}
         </button>
         <LangToggle />
       </div>
@@ -56,7 +56,7 @@ export function Briefing() {
         </ul>
         <div className="actions">
           <button className="btn primary big" onClick={() => setState({ screen: 'pack' })}>
-            {t('briefing.go')} →
+            {t('briefing.go')} <span className="arr">→</span>
           </button>
         </div>
       </div>

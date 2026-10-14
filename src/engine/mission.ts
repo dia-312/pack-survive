@@ -88,6 +88,7 @@ export function createMission(cargo: Cargo, seed: number, cfg: Config = CONFIG):
     science: 0,
     systems,
     greenhouseGrowth: 0,
+    harvestCooldown: 0,
     effects: {
       dust: false,
       meteoroid: false,
@@ -182,8 +183,7 @@ export function resolveEvent(
       fx.meteoroid = false;
       break;
     case 'dust:clean':
-      fx.dust = false;
-      s.morale = clamp(s.morale + e.cleanMorale, 0, cfg.params.morale.max);
+      cleanDust(s, cfg);
       break;
     case 'leak:patch':
       s.morale = clamp(s.morale + e.patchMorale, 0, cfg.params.morale.max);
@@ -232,5 +232,43 @@ export function setSystem(s: MissionState, id: SystemId, on: boolean): boolean {
   if (!sys.present) return false;
   if (on && sys.broken) return false;
   sys.on = on;
+  return true;
+}
+
+export type RepairTarget = 'solar' | 'recycler';
+
+/** Is there something a spare part could fix right now? */
+export function canRepair(s: MissionState, target: RepairTarget): boolean {
+  if (s.spares < 1) return false;
+  return target === 'solar' ? s.effects.meteoroid : s.systems.recycler.broken;
+}
+
+/** Use one spare part on a damaged solar field or a broken recycler (any time, not only on the day it broke). */
+export function useSpare(s: MissionState, target: RepairTarget): boolean {
+  if (!canRepair(s, target)) return false;
+  s.spares -= 1;
+  if (target === 'solar') s.effects.meteoroid = false;
+  else {
+    s.systems.recycler.broken = false;
+    s.effects.rationDays = 0;
+    s.effects.recyclerRepairIn = 0;
+  }
+  return true;
+}
+
+/** Brush the dust off the solar panels (a chore: a little morale). */
+export function cleanDust(s: MissionState, cfg: Config = CONFIG): boolean {
+  if (!s.effects.dust) return false;
+  s.effects.dust = false;
+  s.morale = clamp(s.morale + cfg.params.effects.cleanMorale, 0, cfg.params.morale.max);
+  return true;
+}
+
+/** Pick fresh salad: a small morale boost, once the plants are grown (3-day cooldown). */
+export function harvest(s: MissionState, cfg: Config = CONFIG): boolean {
+  const grown = s.greenhouseGrowth > (cfg.items.greenhouse.growDays ?? 0);
+  if (!s.systems.greenhouse.present || !grown || s.harvestCooldown > 0) return false;
+  s.harvestCooldown = 3;
+  s.morale = clamp(s.morale + 3, 0, cfg.params.morale.max);
   return true;
 }
