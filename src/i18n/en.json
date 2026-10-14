@@ -301,7 +301,7 @@
   "radar.batteryEmpty": "The battery is empty and systems are shutting off. Power comes first!",
   "radar.dark": "Dark spell! Solar panels give nothing. Keep an eye on the battery.",
   "radar.hello": "Beep boop! I am Radar, your helper robot.",
-  "radar.landed": "Touchdown! Walk up to a module and press E (or tap the button) to check it.",
+  "radar.landed": "Touchdown! Move with WASD / arrows (or the joystick). Stand near a module and press E (or the button) to check it.",
   "radar.landing": "Landing in 3… 2… 1… Touchdown! Walk around and check on every module.",
   "radar.name": "Radar",
   "radar.storm.hide": "No shelter packed! Hide behind the habitat.",

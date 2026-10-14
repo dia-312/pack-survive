@@ -65,7 +65,19 @@ PLAN.md  CLAUDE.md  README.md
 - [ ] Arabic + English, desktop + phone, single `npm run build`
 - [ ] No NASA logo / copyrighted characters; all art code-generated
 
-## Open questions for you (defaults used if no answer)
-1. Start with zero water/food unless packed (default) — or give a 1-day emergency ration?
-2. Language default: Arabic or English? (default: follow browser language, toggle on Start.)
-3. Stars formula: OK as sketched above?
+## Decisions taken while building (all from the "simplest option that serves the learning goals" rule)
+Status: **M1-M7 done.** The user said to decide everything; these are the calls made.
+
+1. **Crew of 4.** The brief lists "crew of 4 (player + Layan, Omar, Maya, Kenji)" which is 5 names. Crew = you + Layan + Omar + Maya (consumption 4/day, as the table says). **Kenji is Mission Control on Earth** (he appears in the "message from home" situation).
+2. **Habitat stores.** The habitat starts with 12 oxygen (brief) **and also 12 water and 12 food** (3 days of each), so a bad cargo fails on day 3-4 instead of on day 1. Everything else comes from cargo. The battery starts full.
+3. **Max per item** (`items.json`): needed so the balance script can enumerate cargos. Solar 4, battery 4, reactor 1, generator 1, o2 tank 6, recycler 1, water tank 6, food 8, greenhouse 1, shield 1, excavator 1, shelter 1, spares 3. 531,274 cargos fit in 20 mass.
+4. **Shielding vs. cosmic rays** (brief: "helps a lot against storms but little against cosmic rays"): storm dose uses the shield factor in full; the daily cosmic dose uses `1 - (1 - factor) * 0.5` (`cosmicShieldEffectiveness`).
+5. **Radiation numbers.** The 100 mSv limit is a game rule (the real NASA career limit, 600 mSv, is shown as a fact). Storm dose 70 mSv is a game value. Storm cover: shelter x0.1, hiding behind the habitat x0.5, none x1.0.
+6. **Oxygen end check.** Evacuate when the crew could not get its full oxygen, or when 0 is left and the mission is not finished; day 30 with a clean finish is a success.
+7. **Situations.** Darkness (days 9, 21) and the storm (day 12-20) are always there; 4-6 more are drawn from the 8 random ones that apply to the packed cargo (recycler breakdown needs a recycler, meteoroid/dust need panels, mold needs a greenhouse). No two situations on neighbouring days. Each situation has exactly two choices with a stated cost, hands-on ones become a walk-and-hold task, and the day's default choice applies if time runs out.
+8. **Spare parts** fix a broken recycler or cracked panels at any time (not only on the day it breaks). Without a spare the recycler is patched by the crew after 3 days of rationing; cracked panels stay at half output.
+9. **Stars.** Success: 2 stars, 3 if crew health >= 70, dose <= 70 and morale >= 50. Evacuation: 1 star, 2 if it happened on day 20 or later. Science stars are shown separately.
+10. **Real-time.** 1 day = 20 s (`secondsPerDay`); the clock pauses while any panel/card is open, during the landing, and while the storm countdown runs. `?daysec=N` shortens days for testing.
+11. **Facts.** Only the six facts in the brief plus four we found with real sources (lunar dust, micrometeoroids, ISS family video calls, ISS sleep schedule) and three stories (Apollo 13, the August 1972 storm, Opportunity). Where a source is a news page repeating NASA material it is flagged `secondary` in `facts.json` and in Scientist mode. The Apollo 13 story links to Wikipedia because nasa.gov was not reachable from the build machine (marked `todo` in `facts.json`).
+12. **Balance targets.** See README: with the brief's own numbers 18 of the 20 mass units are needed just for consumables, so blind random cargos almost never succeed. The balance script reports three tiers; the "no cargo above 95 %" and "thoughtful 75-85 %" targets are met, the "random 20-30 %" target is only met when "random" means a random cargo that names power, air, water and food. Radar's plan check (a dry run of a quiet mission) is shown in the pack screen so kids can see it.
+13. **Default language:** the browser language (Arabic if it starts with "ar", otherwise English), remembered in localStorage; `?lang=ar|en` overrides it.

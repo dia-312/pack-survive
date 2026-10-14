@@ -110,10 +110,7 @@ export function resetController(): void {
 }
 
 export function onLanded(): void {
-  setState({ landing: false });
-  const m = mission();
-  setState({ radar: { key: 'radar.landed' } });
-  void m;
+  setState({ landing: false, radar: { key: 'radar.landed' } });
 }
 
 function onDayStart(): void {
@@ -298,12 +295,10 @@ function startStorm(): void {
 }
 
 function finishStorm(made: boolean): void {
-  const st = view.storm;
   view.storm = null;
   view.stormHit = made ? 0 : 1;
   setState({ storm: null });
   resolveWithResult('storm', made ? 'shelter' : 'late');
-  void st;
 }
 
 function completeTask(t: TaskRuntime): void {
@@ -320,7 +315,7 @@ function resolveWithResult(ev: EventId, choice: string): void {
   view.task = null;
   setState({
     task: null,
-    overlay: { kind: 'card', event: ev, phase: 'result', choice: ok ? choice : 'ration' },
+    overlay: { kind: 'card', event: ev, phase: 'result', choice: ok ? choice : CONFIG.events[ev].default },
   });
 }
 

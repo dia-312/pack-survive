@@ -43,7 +43,7 @@ export const LANDER = { x: 1560, y: 960, w: 150, h: 190 };
 export const PLAYER_START = { x: 1560, y: 1000 };
 
 /** Spot behind the habitat where the crew hides from a storm when no shelter was packed. */
-export const HIDE_SPOT = { x: 1700, y: 560, r: 150 };
+export const HIDE_SPOT = { x: 1700, y: 515, r: 95 };
 
 export function present(m: ModuleLayout, cargo: Cargo): boolean {
   return m.needs === 'always' || m.needs.some((id) => (cargo[id] ?? 0) > 0);

@@ -763,7 +763,7 @@ button {
 }
 .joystick {
   position: absolute;
-  inset-inline-start: calc(20px + env(safe-area-inset-left));
+  left: calc(20px + env(safe-area-inset-left));
   bottom: calc(24px + env(safe-area-inset-bottom));
   width: 148px;
   height: 148px;
@@ -800,7 +800,7 @@ button {
 }
 .action-btn {
   position: absolute;
-  inset-inline-end: calc(20px + env(safe-area-inset-right));
+  right: calc(20px + env(safe-area-inset-right));
   bottom: calc(28px + env(safe-area-inset-bottom));
   width: 112px;
   height: 112px;
@@ -1919,4 +1919,141 @@ kbd {
 }
 [dir='rtl'] .arr {
   transform: scaleX(-1);
+}
+
+
+/* ---------- compact HUD for phones (narrow or short screens) and touch layout ---------- */
+.skip-hud {
+  display: none;
+}
+@media (max-width: 560px), (max-height: 520px) {
+  .hud-top {
+    gap: 4px;
+    padding-bottom: 4px;
+  }
+  .day-block {
+    padding: 3px 8px;
+    flex: 1 1 130px;
+  }
+  .day-row {
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+  }
+  .day-row svg {
+    width: 22px;
+    height: 22px;
+  }
+  .meters {
+    order: 3;
+    flex: 1 1 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .meter {
+    max-width: none;
+    flex-direction: column;
+    gap: 1px;
+    padding: 3px 4px;
+    align-items: stretch;
+  }
+  .meter-icon {
+    display: flex;
+    justify-content: center;
+    line-height: 0;
+  }
+  .meter-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .meter-label,
+  .meter-sub {
+    display: none;
+  }
+  .meter-row {
+    justify-content: center;
+  }
+  .meter-val {
+    font-size: 0.82rem;
+  }
+  .meter-val svg {
+    width: 13px;
+    height: 13px;
+  }
+  .bar {
+    height: 6px;
+  }
+  .hud-right {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+    flex: 1 1 100%;
+    order: 2;
+    justify-content: space-between;
+  }
+  .chip-stat {
+    padding: 1px 8px 1px 4px;
+    font-size: 0.85rem;
+  }
+  .chip-stat svg {
+    width: 18px;
+    height: 18px;
+  }
+  .hud-right .icon-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .skip-hud {
+    display: inline-grid;
+  }
+  .skip-bottom {
+    display: none;
+  }
+  .storm-banner {
+    top: 148px;
+  }
+  .toasts {
+    top: 156px;
+    width: min(260px, 70vw);
+  }
+  .bubble.small {
+    font-size: 0.82rem;
+    padding: 6px 10px;
+  }
+  .radar-say {
+    max-width: 62vw;
+  }
+}
+@media (max-height: 520px) and (min-width: 561px) {
+  .meters {
+    order: 0;
+    flex: 1;
+  }
+  .hud-right {
+    flex: 0 0 auto;
+    order: 0;
+  }
+  .day-block {
+    flex: 0 0 150px;
+  }
+  .storm-banner {
+    top: 74px;
+  }
+  .toasts {
+    top: 84px;
+  }
+}
+
+.hud-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+@media (pointer: coarse) {
+  .bottom-bar {
+    bottom: 196px;
+  }
+  .storm-count {
+    font-size: 1.5rem;
+  }
 }

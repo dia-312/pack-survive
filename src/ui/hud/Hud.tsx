@@ -134,9 +134,16 @@ export function Hud() {
               );
             })}
           </ul>
-          <button className="icon-btn" onClick={() => setState({ overlay: { kind: 'menu' } })} aria-label={t('hud.menu')}>
-            <span aria-hidden="true">☰</span>
-          </button>
+          <span className="hud-actions">
+            {skip && (
+              <button className="icon-btn skip-hud" onClick={skipDay} aria-label={t('hud.skip')} title={t('hud.skip')}>
+                <span aria-hidden="true">⏭</span>
+              </button>
+            )}
+            <button className="icon-btn" onClick={() => setState({ overlay: { kind: 'menu' } })} aria-label={t('hud.menu')}>
+              <span aria-hidden="true">☰</span>
+            </button>
+          </span>
         </div>
       </div>
 
@@ -213,7 +220,7 @@ function BottomBar({ skip }: { skip: boolean }) {
         </div>
       )}
       {skip && (
-        <button className="btn accent skip" onClick={skipDay} title={t('hud.skipHint')}>
+        <button className="btn accent skip skip-bottom" onClick={skipDay} title={t('hud.skipHint')}>
           ⏭ {t('hud.skip')}
         </button>
       )}
