@@ -1,0 +1,89 @@
+{
+  "_note": "Starting balance values. mass in lander units; max = most of that item a player may pack.",
+  "items": [
+    {
+      "id": "solar",
+      "mass": 2,
+      "max": 4,
+      "power": 6
+    },
+    {
+      "id": "battery",
+      "mass": 2,
+      "max": 4,
+      "capacity": 10
+    },
+    {
+      "id": "reactor",
+      "mass": 6,
+      "max": 1,
+      "power": 8
+    },
+    {
+      "id": "o2gen",
+      "mass": 2,
+      "max": 1,
+      "oxygen": 4,
+      "powerUse": 3,
+      "waterUse": 1
+    },
+    {
+      "id": "o2tank",
+      "mass": 1,
+      "max": 6,
+      "oxygen": 20
+    },
+    {
+      "id": "recycler",
+      "mass": 2,
+      "max": 1,
+      "recovery": 0.98,
+      "powerUse": 2
+    },
+    {
+      "id": "watertank",
+      "mass": 1,
+      "max": 6,
+      "water": 20
+    },
+    {
+      "id": "food",
+      "mass": 1,
+      "max": 8,
+      "food": 20
+    },
+    {
+      "id": "greenhouse",
+      "mass": 3,
+      "max": 1,
+      "food": 2,
+      "oxygen": 1,
+      "powerUse": 3,
+      "waterUse": 1,
+      "growDays": 9
+    },
+    {
+      "id": "shield",
+      "mass": 4,
+      "max": 1,
+      "shieldLevel": 2
+    },
+    {
+      "id": "excavator",
+      "mass": 2,
+      "max": 1,
+      "powerUse": 2,
+      "daysPerLevel": 5
+    },
+    {
+      "id": "shelter",
+      "mass": 2,
+      "max": 1
+    },
+    {
+      "id": "spare",
+      "mass": 1,
+      "max": 3
+    }
+  ]
+}

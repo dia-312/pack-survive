@@ -1,0 +1,196 @@
+{
+  "_note": "Every fact has a real source. kid = normal play wording. scientist = exact values (shown only in Scientist mode). secondary = true if the source is a news/secondary page that repeats NASA material. Never add a fact without a source: use todo instead.",
+  "facts": {
+    "oxygen_per_day": {
+      "kid": {
+        "en": "Every astronaut needs fresh oxygen every single day, so a base has to carry it or make it.",
+        "ar": "كل رائد فضاء يحتاج إلى أكسجين جديد كل يوم، لذلك على القاعدة أن تحمله معها أو تصنعه."
+      },
+      "scientist": {
+        "en": "An astronaut uses about 0.82 kg of oxygen per day (NASA Life Support Baseline Values and Assumptions Document).",
+        "ar": "يستهلك رائد الفضاء نحو 0.82 كغ من الأكسجين في اليوم (وثيقة ناسا: Life Support Baseline Values and Assumptions)."
+      },
+      "source": {
+        "title": "NASA NTRS - Life Support Baseline Values and Assumptions Document",
+        "url": "https://ntrs.nasa.gov/citations/20210024855"
+      }
+    },
+    "iss_water": {
+      "kid": {
+        "en": "On the space station almost all the water is cleaned and used again, because carrying new water from Earth is very heavy.",
+        "ar": "في محطة الفضاء يُنظَّف معظم الماء ويُستخدم مرة أخرى، لأن حمل ماء جديد من الأرض ثقيل جدًا."
+      },
+      "scientist": {
+        "en": "The ISS recovers 98% of its water (93-94% before the Brine Processor). NASA, 2023.",
+        "ar": "تستعيد محطة الفضاء الدولية 98% من مائها (93-94% قبل معالج المحلول الملحي). ناسا، 2023."
+      },
+      "source": {
+        "title": "NASA, 2023",
+        "url": "https://www.nasa.gov/?p=475676"
+      }
+    },
+    "lunar_radiation": {
+      "kid": {
+        "en": "The Moon has no thick air to protect you, so radiation reaches the ground all day. Just two days there add up to about a whole year of natural radiation on Earth!",
+        "ar": "ليس للقمر هواء سميك يحميك، فيصل الإشعاع إلى سطحه طوال الوقت. يومان فقط هناك يساويان تقريبًا إشعاع سنة كاملة طبيعية على الأرض!"
+      },
+      "scientist": {
+        "en": "Lunar surface radiation is about 1.37 mSv per day (Chang'E-4 LND, Science Advances, 2020); two days on the Moon are about a year of natural radiation on Earth.",
+        "ar": "إشعاع سطح القمر نحو 1.37 ميلي سيفرت في اليوم (مقياس LND في مهمة تشانغ إي-4، Science Advances، 2020)؛ يومان على القمر يعادلان نحو سنة من الإشعاع الطبيعي على الأرض."
+      },
+      "source": {
+        "title": "Science Advances 2020 (via Sci.News)",
+        "url": "https://www.sci.news/space/radiation-dose-rates-lunar-surface-08893.html",
+        "secondary": true
+      }
+    },
+    "career_limit": {
+      "kid": {
+        "en": "Radiation is invisible and it adds up. Astronauts have a limit for how much they may collect in their whole career.",
+        "ar": "الإشعاع غير مرئي ويتراكم. وللرواد حدٌّ لما يُسمح لهم بجمعه طوال حياتهم المهنية."
+      },
+      "scientist": {
+        "en": "NASA's career radiation limit for astronauts is 600 mSv. (The 100 mSv limit in this game is a game rule, not a NASA number.)",
+        "ar": "حدّ ناسا للإشعاع طوال المسيرة المهنية لرواد الفضاء هو 600 ميلي سيفرت. (حدّ 100 ميلي سيفرت في اللعبة قاعدة للّعبة وليس رقمًا من ناسا.)"
+      },
+      "source": {
+        "title": "NASA OCHMO - Radiation protection technical brief",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf"
+      }
+    },
+    "lunar_night": {
+      "kid": {
+        "en": "A night on the Moon lasts about two weeks of Earth days! NASA is developing small nuclear power plants that can make electricity in the dark.",
+        "ar": "الليل على القمر يستمر نحو أسبوعين من أيام الأرض! وتعمل ناسا على مفاعلات نووية صغيرة تنتج الكهرباء في الظلام."
+      },
+      "scientist": {
+        "en": "The lunar night lasts about 14.5 Earth days; NASA is developing small fission reactors for it. (In the game the dark spells are only 3 days long to keep play quick.)",
+        "ar": "يستمر الليل القمري نحو 14.5 يومًا أرضيًا؛ وتطوّر ناسا مفاعلات انشطار صغيرة لذلك. (في اللعبة فترات الظلام 3 أيام فقط لتبقى اللعبة سريعة.)"
+      },
+      "source": {
+        "title": "NASA ASCEND 2022 - fission surface power",
+        "url": "https://ntrs.nasa.gov/api/citations/20220014952/downloads/Tofil%20ASCEND%20Oct%202022%20Rev%20C.pdf"
+      }
+    },
+    "veggie": {
+      "kid": {
+        "en": "In 2015 astronauts ate lettuce grown in space for the very first time. It needed patience: the plants grew for weeks first.",
+        "ar": "في عام 2015 أكل الرواد لأول مرة خسًّا نما في الفضاء. احتاج الأمر إلى صبر: نمت النباتات أسابيع قبل ذلك."
+      },
+      "scientist": {
+        "en": "Astronauts first ate space-grown lettuce from the Veggie garden in 2015, after it grew for 33 days.",
+        "ar": "أكل الرواد أول خسّ من حديقة Veggie في الفضاء عام 2015 بعد أن نما 33 يومًا."
+      },
+      "source": {
+        "title": "ScienceAlert, 2015",
+        "url": "https://www.sciencealert.com/nasa-astronauts-will-eat-space-lettuce-for-the-first-time-today",
+        "secondary": true
+      }
+    },
+    "lunar_dust": {
+      "kid": {
+        "en": "Moon dust is sharp and sticky and gets on everything. Apollo astronauts found it very hard to clean off their suits and tools.",
+        "ar": "غبار القمر حادّ ولاصق ويعلق بكل شيء. وجد روّاد أبولو أن تنظيفه عن بدلاتهم وأدواتهم صعب جدًا."
+      },
+      "scientist": {
+        "en": "A NASA technical report studied Apollo spacesuits worn on the Moon for dust contamination, abrasion and loss of function.",
+        "ar": "درس تقرير فني لناسا بدلات أبولو التي لُبست على القمر من حيث تلوّثها بالغبار وتآكلها وفقدان أدائها."
+      },
+      "source": {
+        "title": "NASA NTRS 20090015239",
+        "url": "https://ntrs.nasa.gov/citations/20090015239"
+      }
+    },
+    "micrometeoroids": {
+      "kid": {
+        "en": "Earth's air burns up most tiny space rocks. The Moon has almost no air, so they can hit the ground and your base directly.",
+        "ar": "هواء الأرض يحرق معظم الصخور الفضائية الصغيرة. أما القمر فلا هواء له تقريبًا، فتضرب سطحه وقاعدتك مباشرة."
+      },
+      "scientist": {
+        "en": "NASA notes that most meteoroids break up in Earth's atmosphere, while the Moon has little to no atmosphere to stop them, so impacts excavate craters and throw up debris.",
+        "ar": "تذكر ناسا أن معظم النيازك الصغيرة تتفتت في غلاف الأرض الجوي، أما القمر فلا غلاف جوي يوقفها، فتحفر فوهات وتقذف الحطام."
+      },
+      "source": {
+        "title": "NASA NTRS 20170008146",
+        "url": "https://ntrs.nasa.gov/citations/20170008146"
+      }
+    },
+    "family_calls": {
+      "kid": {
+        "en": "Astronauts on the space station have video calls with their families every week. It helps them feel less far away.",
+        "ar": "يجري رواد محطة الفضاء مكالمات فيديو مع عائلاتهم كل أسبوع. وهذا يساعدهم على الشعور بأنهم أقل بعدًا."
+      },
+      "scientist": {
+        "en": "NASA schedules family video conferences weekly and on holidays and special events; they provide psychological support.",
+        "ar": "تجدول ناسا مؤتمرات فيديو عائلية أسبوعيًا وفي الأعياد والمناسبات الخاصة؛ وهي تقدّم دعمًا نفسيًا."
+      },
+      "source": {
+        "title": "NASA - Living in Space: Family Video Conference",
+        "url": "https://www.nasa.gov/?p=444576"
+      }
+    },
+    "sleep": {
+      "kid": {
+        "en": "NASA plans a long night's sleep for astronauts. Tired crews make more mistakes, so rest is part of the mission.",
+        "ar": "تخصص ناسا للرواد وقتًا طويلًا للنوم. الطاقم المتعب يرتكب أخطاءً أكثر، لذلك الراحة جزء من المهمة."
+      },
+      "scientist": {
+        "en": "NASA's mission rules schedule 8.5 hours of sleep per night on the ISS; a study of 2,951 nights found crews often slept less.",
+        "ar": "تنص قواعد مهام ناسا على 8.5 ساعة نوم في الليلة على المحطة الدولية؛ ووجدت دراسة شملت 2951 ليلة أن الطواقم كثيرًا ما نامت أقل."
+      },
+      "source": {
+        "title": "Space.com (Lancet Neurology study)",
+        "url": "https://www.space.com/26829-astronauts-space-station-sleep-deprivation.html",
+        "secondary": true
+      }
+    }
+  },
+  "stories": {
+    "apollo13": {
+      "title": {
+        "en": "Apollo 13 (1970)",
+        "ar": "أبولو 13 (1970)"
+      },
+      "text": {
+        "en": "In April 1970 an oxygen tank failed on the way to the Moon. The crew used the Lunar Module as a lifeboat, and everyone came home safely.",
+        "ar": "في أبريل 1970 تعطّل خزان أكسجين في طريق أبولو 13 إلى القمر. استخدم الطاقم مركبة الهبوط القمرية كقارب نجاة، وعاد الجميع سالمين."
+      },
+      "source": {
+        "title": "Wikipedia - Apollo 13",
+        "url": "https://en.wikipedia.org/wiki/Apollo_13",
+        "secondary": true
+      },
+      "todo": "Swap in a nasa.gov Apollo 13 page when it can be fetched."
+    },
+    "apollo1972": {
+      "title": {
+        "en": "The big storm of August 1972",
+        "ar": "العاصفة الكبيرة في أغسطس 1972"
+      },
+      "text": {
+        "en": "In August 1972 one of the biggest solar storms of the space age happened between Apollo 16 and Apollo 17. Nobody was on the Moon then. Scientists say moonwalkers caught outside could have been in real danger, which is why future missions plan shelters and storm warnings.",
+        "ar": "في أغسطس 1972 حدثت واحدة من أكبر العواصف الشمسية في عصر الفضاء بين أبولو 16 وأبولو 17. لم يكن أحد على القمر وقتها. يقول العلماء إن من يكون خارج المركبة حينها قد يتعرّض لخطر حقيقي، ولهذا تخطّط المهمات القادمة لملاجئ وتحذيرات من العواصف."
+      },
+      "source": {
+        "title": "Space.com - A Bad Week to be on the Moon (from Science@NASA)",
+        "url": "https://www.space.com/749-bad-week-moon.html",
+        "secondary": true
+      }
+    },
+    "opportunity": {
+      "title": {
+        "en": "Mars rover Opportunity (2018)",
+        "ar": "مركبة المريخ أوبورتيونيتي (2018)"
+      },
+      "text": {
+        "en": "In 2018 a planet-wide dust storm darkened the sky over the solar-powered Mars rover Opportunity. It lost power, never woke up again, and NASA ended the mission in February 2019.",
+        "ar": "في عام 2018 غطّت عاصفة غبار عالمية سماء المريخ فوق المركبة أوبورتيونيتي التي تعمل بالطاقة الشمسية. فقدت الطاقة ولم تستيقظ مجددًا، وأنهت ناسا المهمة في فبراير 2019."
+      },
+      "source": {
+        "title": "Spaceflight Now, 2019",
+        "url": "https://spaceflightnow.com/2019/02/13/nasa-declares-opportunity-rover-dead-after-15-years-on-mars/",
+        "secondary": true
+      }
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "_note": "Situations. kind fixed = scheduled by rule; random = drawn by seed. requires = cargo items needed for the event to be eligible. Texts live in i18n under events.<id>.*",
+  "events": [
+    {
+      "id": "darkness",
+      "kind": "fixed",
+      "requires": [],
+      "choices": [
+        "save",
+        "keep"
+      ],
+      "default": "keep",
+      "hands": false,
+      "fact": "lunar_night"
+    },
+    {
+      "id": "storm",
+      "kind": "fixed",
+      "requires": [],
+      "choices": [
+        "shelter",
+        "work"
+      ],
+      "default": "late",
+      "hands": true,
+      "fact": "career_limit"
+    },
+    {
+      "id": "recycler_break",
+      "kind": "random",
+      "requires": [
+        "recycler"
+      ],
+      "choices": [
+        "spare",
+        "ration"
+      ],
+      "default": "ration",
+      "hands": true,
+      "fact": "iss_water"
+    },
+    {
+      "id": "meteoroid",
+      "kind": "random",
+      "requires": [
+        "solar"
+      ],
+      "choices": [
+        "spare",
+        "ignore"
+      ],
+      "default": "ignore",
+      "hands": true,
+      "fact": "micrometeoroids"
+    },
+    {
+      "id": "dust",
+      "kind": "random",
+      "requires": [
+        "solar"
+      ],
+      "choices": [
+        "clean",
+        "ignore"
+      ],
+      "default": "ignore",
+      "hands": true,
+      "fact": "lunar_dust"
+    },
+    {
+      "id": "leak",
+      "kind": "random",
+      "requires": [],
+      "choices": [
+        "patch",
+        "ignore"
+      ],
+      "default": "ignore",
+      "hands": true,
+      "fact": "oxygen_per_day"
+    },
+    {
+      "id": "mold",
+      "kind": "random",
+      "requires": [
+        "greenhouse"
+      ],
+      "choices": [
+        "cut",
+        "airflow"
+      ],
+      "default": "cut",
+      "hands": false,
+      "fact": "veggie"
+    },
+    {
+      "id": "rock",
+      "kind": "random",
+      "requires": [],
+      "choices": [
+        "scan",
+        "ignore"
+      ],
+      "default": "ignore",
+      "hands": true,
+      "fact": "lunar_radiation"
+    },
+    {
+      "id": "home",
+      "kind": "random",
+      "requires": [],
+      "choices": [
+        "call",
+        "data"
+      ],
+      "default": "call",
+      "hands": false,
+      "fact": "family_calls"
+    },
+    {
+      "id": "tired",
+      "kind": "random",
+      "requires": [],
+      "choices": [
+        "rest",
+        "work"
+      ],
+      "default": "work",
+      "hands": false,
+      "fact": "sleep"
+    }
+  ]
+}
