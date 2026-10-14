@@ -88,16 +88,14 @@ export function* enumerateCargos(cfg: Config = CONFIG): Generator<Cargo> {
 /**
  * Suggested cargo for Easy mode. Tuned with scripts/balance.ts: a reactor keeps the
  * base alive through both dark spells, the generator + recycler stretch the water and
- * air, a shelter covers the storm, a spare part fixes one breakdown, and the food
- * crates feed the crew.
+ * air, a shelter covers the storm, and the food crates feed the crew. It has no spare part:
+ * that is the trade-off Radar points out.
  */
 export const SUGGESTED_CARGO: Cargo = {
   reactor: 1,
   o2gen: 1,
-  o2tank: 1,
   recycler: 1,
   watertank: 2,
-  food: 4,
+  food: 6,
   shelter: 1,
-  spare: 1,
 };

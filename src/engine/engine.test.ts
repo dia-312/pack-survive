@@ -19,6 +19,7 @@ import {
 } from './mission';
 import { carelessPolicy, simulate, smartPolicy } from './policy';
 import { makeRng, mulberry32 } from './rng';
+import { planCargo } from './plan';
 import { stars, turningPoint } from './score';
 import { planPower, tick } from './tick';
 import type { Cargo, Config, MissionState } from './types';
@@ -646,5 +647,26 @@ describe('score', () => {
       }
     }
     expect(found).toBe(true);
+  });
+});
+
+describe('cargo plan (Radar check)', () => {
+  it('suggested cargo finishes a quiet mission with no issues except none', () => {
+    const p = planCargo(SUGGESTED_CARGO);
+    expect(p.finishes).toBe(true);
+    expect(p.issues.filter((i) => i.kind !== 'cover')).toEqual([]);
+  });
+  it('an empty-ish lander runs out of oxygen on day 3', () => {
+    const p = planCargo({ food: 1 });
+    expect(p.finishes).toBe(false);
+    expect(p.issues.find((i) => i.kind === 'oxygen')?.day).toBe(3);
+  });
+  it('flags the dark spell for solar-only power without batteries', () => {
+    const p = planCargo({ solar: 2, o2tank: 6, watertank: 6, food: 4 });
+    expect(p.issues.some((i) => i.kind === 'night')).toBe(true);
+  });
+  it('warns when there is no storm cover at all', () => {
+    expect(planCargo({ reactor: 1 }).issues.some((i) => i.kind === 'cover')).toBe(true);
+    expect(planCargo({ reactor: 1, shelter: 1 }).issues.some((i) => i.kind === 'cover')).toBe(false);
   });
 });
