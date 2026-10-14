@@ -45,6 +45,13 @@ time pauses while any panel/card is open · max 1 new situation/day, 4–6 per r
 - Mobile: on-screen joystick + big action button, touch targets ≥ 44 px, smooth on a mid-range phone.
 - No backend. Best score in `localStorage` (always wrapped in try/catch).
 
+## Handy facts for working on it
+- Address params: `?lang=ar|en`, `?seed=N` (replay a mission), `?daysec=N` (shorter days for testing).
+- Dev server only: `window.__pack` exposes `getState`, `setState`, `startMission`, `controller` (`controller.debug.teleport(x, y)`, `controller.view.task`) for scripted tests and screenshots.
+- Phaser never renders Arabic text; all text is React DOM. The mascot is Radar (original), crew = you + Layan + Omar + Maya, Kenji = Mission Control.
+- Decisions and assumptions are recorded in `PLAN.md` ("Decisions taken while building").
+- A test (`src/engine/i18n.test.ts`) fails if `ar.json` and `en.json` differ or a `t('key')` used in code is missing.
+
 ## Workflow
 - Build milestone by milestone (see `PLAN.md`); **run tests and commit after each milestone**.
 - Commands: `npm run dev` · `npm test` · `npm run balance` · `npm run build` (static, Vercel-ready).
