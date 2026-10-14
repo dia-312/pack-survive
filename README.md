@@ -89,7 +89,7 @@ Facts live in `src/data/facts.json`, in Arabic and English, each with a real sou
 Where a source is a news page that repeats NASA material it is marked "secondary". Nothing is invented:
 the 100 mSv limit and the storm dose are *game rules* and are labelled that way (the real NASA career limit, 600 mSv, is a fact).
 
-## Balance report
+## Balance report (Challenge rules)
 
 `npm run balance` plays **every cargo that fits in 20 mass units** (531,274 of them, using the per-item maximums in
 `items.json`) over **200 seeds** each with a simulated commander: sensible choices on every card, but
@@ -168,6 +168,29 @@ kilogram counts") and instead made the puzzle approachable: Radar's plan check o
 and tells the kid which supply runs short and on which day, Easy mode offers a cargo that works, and a failed cargo ends within
 days, so a retry is fast. If you want a gentler random-play rate, the knobs are the tank/crate sizes in `src/data/items.json`
 (doubling them gives roughly 10 % for random cargos) and the health penalties in `params.json`; rerun `npm run balance` after changing them.
+
+### Easy mode (the default for kids)
+
+Easy mode changes only the values under `difficulty.easy` in `params.json` (habitat stores 40/40/40, gentler health
+penalties, a smaller storm, a 30 s storm countdown, 3-4 surprises, a smaller leak). Same run, `npm run balance -- --difficulty easy`:
+
+```text
+Difficulty: easy. Cargos within 20 mass: 531274. Seeds: 200. Threads: 4.
+Simulated 106,254,800 missions in 1917.7 s.
+
+Summary (target in brackets)
+  blind random fill (any items, 224229 cargos):          11.7 %
+  random cargo (random fill that names power+air+water+food, 95023):  23.9 %   [20-30 %]
+  thoughtful cargo (checklist, 507 cargos):          97.9 %   [75-85 %]
+  best single cargo:                                  100.0 %   [no cargo above 95 %]
+  cargos above 95 %:                                  22383   [0]
+  cargos with 75 %+ success:                          36118 (reactor 6708, solar+battery 26958, no power plant 2452, no generator 15266)
+  cargos that never succeed:                          475475 of 531274
+
+```
+
+In Easy mode the **random-cargo target (20-30 %) is met: 23.9 %**, and a cargo that does the sums almost always finishes
+(97.9 %). Many cargos reach 100 %, which is fine for the easy setting; the Challenge numbers above keep the "no cargo above 95 %" rule.
 
 What the best cargos look like: a reactor (power day and night, so the dark days cost nothing), an oxygen generator or oxygen tanks,
 a recycler, enough water and 4-5 food crates, plus one safety item (excavator, ready-made shield, shelter or a spare part).
