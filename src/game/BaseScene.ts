@@ -222,8 +222,8 @@ export class BaseScene extends Phaser.Scene {
   }
 
   private buildOverlays(): void {
-    this.darkRect = this.add.rectangle(0, 0, 8000, 8000, 0x050b24, 0).setScrollFactor(0).setDepth(100000);
-    this.stormRect = this.add.rectangle(0, 0, 8000, 8000, 0xe5484d, 0).setScrollFactor(0).setDepth(100020);
+    this.darkRect = this.add.rectangle(0, 0, 8000, 8000, 0x050b24, 1).setScrollFactor(0).setDepth(100000).setAlpha(0);
+    this.stormRect = this.add.rectangle(0, 0, 8000, 8000, 0xe5484d, 1).setScrollFactor(0).setDepth(100020).setAlpha(0);
   }
 
   private setupInput(): void {
@@ -505,7 +505,7 @@ export class BaseScene extends Phaser.Scene {
 
   private darkNow = 0;
   private updateDark(m: MissionState, dt: number): void {
-    const target = sunFactor(m.day) === 0 ? 0.55 : 0;
+    const target = sunFactor(m.day) === 0 ? 0.62 : 0;
     this.darkNow += (target - this.darkNow) * Math.min(1, dt * 1.6);
     this.darkRect.setAlpha(this.darkNow);
     const glow = Math.min(1, this.darkNow / 0.4);
