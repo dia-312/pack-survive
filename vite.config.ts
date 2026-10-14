@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1600,
     rollupOptions: {
-      output: { manualChunks: { phaser: ['phaser'] } },
+      output: { manualChunks: { three: ['three'] } },
     },
   },
   test: {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { CONFIG } from '../../engine/config';
+import { configFor } from '../../engine/config';
 import { planPower } from '../../engine/tick';
 import { canSkip, skipDay } from '../../game/controller';
 import { CREW_COLORS, Face, faceFor, ResourceIcon, StatusIcon, type ResIcon, type StatusKind } from '../icons';
@@ -53,6 +53,7 @@ function Meter({
 export function Hud() {
   const { t } = useT();
   const m = useMission();
+  const CONFIG = configFor(m.difficulty);
   const dayProgress = useStore((s) => s.dayProgress);
   const task = useStore((s) => s.task);
   const storm = useStore((s) => s.storm);
@@ -94,19 +95,19 @@ export function Hud() {
             value={m.battery}
             max={Math.max(1, m.batteryCap)}
             level={batLevel}
-            text={m.batteryCap > 0 ? `${fmt(m.battery)}/${m.batteryCap}` : '0'}
+            text={m.batteryCap > 0 ? `${Math.floor(m.battery)}/${m.batteryCap}` : '0'}
             sub={t('hud.power', { p: fmt(plan.produced), d: fmt(demand) })}
           />
-          <Meter icon="oxygen" label={t('hud.oxygen')} value={m.oxygen} max={Math.max(40, m.oxygen)} level={daysLevel(days.oxygen, left)} sub={lastsText(days.oxygen)} />
-          <Meter icon="water" label={t('hud.water')} value={m.water} max={Math.max(40, m.water)} level={daysLevel(days.water, left)} sub={lastsText(days.water)} />
-          <Meter icon="food" label={t('hud.food')} value={m.food} max={Math.max(40, m.food)} level={daysLevel(days.food, left)} sub={lastsText(days.food)} />
+          <Meter icon="oxygen" label={t('hud.oxygen')} text={String(Math.floor(m.oxygen))} value={m.oxygen} max={Math.max(40, m.oxygen)} level={daysLevel(days.oxygen, left)} sub={lastsText(days.oxygen)} />
+          <Meter icon="water" label={t('hud.water')} text={String(Math.floor(m.water))} value={m.water} max={Math.max(40, m.water)} level={daysLevel(days.water, left)} sub={lastsText(days.water)} />
+          <Meter icon="food" label={t('hud.food')} text={String(Math.floor(m.food))} value={m.food} max={Math.max(40, m.food)} level={daysLevel(days.food, left)} sub={lastsText(days.food)} />
           <Meter
             icon="radiation"
             label={t('hud.dose')}
             value={m.dose}
             max={P.doseLimitMSv}
             level={doseLevel}
-            text={`${fmt(m.dose)}/${P.doseLimitMSv}`}
+            text={`${Math.round(m.dose)}/${P.doseLimitMSv}`}
             sub={`${t('hud.shield')}: ${t('hud.shieldLevel', { n: m.shieldLevel })}`}
           />
         </div>

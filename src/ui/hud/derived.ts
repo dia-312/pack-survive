@@ -1,4 +1,4 @@
-import { CONFIG } from '../../engine/config';
+import { configFor } from '../../engine/config';
 import type { MissionState } from '../../engine/types';
 import { useStore } from '../store';
 
@@ -15,6 +15,7 @@ export type Level = 'ok' | 'warn' | 'bad';
  * Before the first day ends, assume every packed system will run.
  */
 export function supplyDays(m: MissionState): { oxygen: number; water: number; food: number } {
+  const CONFIG = configFor(m.difficulty);
   const crew = m.crew.length;
   const first = m.log.length === 0;
   const run = (k: 'o2gen' | 'recycler' | 'greenhouse') => (first ? m.systems[k].on && !m.systems[k].broken : m.systems[k].running);

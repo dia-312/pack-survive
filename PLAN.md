@@ -4,7 +4,7 @@ Goal: a kid can pack, land, walk around, handle ≥ 5 different situations, and 
 (30 days × 20 s = 10 min of real time), in Arabic and English, on desktop and phone, from one `npm run build`.
 
 ## Stack
-Vite + TypeScript · Phaser 3 (map) · React (overlay) · Vitest (engine) · `tsx` (balance script) · i18n via small JSON dictionaries.
+Vite + TypeScript · three.js (first-person 3D base + cut-scene; Phaser in v1) · React (overlay) · Vitest (engine) · `tsx` (balance script) · i18n via small JSON dictionaries.
 
 ## File layout
 ```
@@ -42,14 +42,14 @@ PLAN.md  CLAUDE.md  README.md
 - **Scientist mode:** adds exact numbers + source links to panels/cards and the shielding note (helps a lot vs. solar storms, little vs. cosmic rays).
 - **Pausing:** a global `paused` flag from the overlay stops the day timer, NPC movement and the storm countdown.
 - **Rendering for perf:** pre-render all textures once, cap NPC count (4), no per-frame allocations in `update`, tilemap-free ground via tiled `TileSprite`.
-- **Arabic text** is rendered only in React (DOM), never in Phaser text objects, apart from digits/icons.
+- **Arabic text** is rendered only in React (DOM), never inside the 3D canvas.
 - **Facts:** only the six sourced facts from the brief are used; any additional ones are `TODO` markers until a real source is added.
 
 ## Risks & mitigations
 | Risk | Mitigation |
 |------|-----------|
 | Balance targets (random 20–30 %, thoughtful 75–85 %, none > 95 %) are hard to hit | Build the balance script in M1 before any UI; tune `params.json`/`items.json` only; "thoughtful" = heuristic cargo (power + O₂ + water + food + shelter). Report honestly if targets can't be met. |
-| Phaser ↔ React state drift | Engine state is the single source of truth; Phaser only reads it and emits intents (interact, repair, move-to-shelter). |
+| 3D world ↔ React state drift | Engine state is the single source of truth; the 3D world only reads it and calls controller intents (interact, repair, move-to-shelter). |
 | Arabic/RTL bugs | All text in DOM, logical CSS properties, `dir` switched at overlay root, tested in both languages each milestone. |
 | Touch controls clash with page scroll/zoom | `touch-action: none` on game + joystick, large hit areas (≥ 44 px), viewport meta without user-scalable issues. |
 | Mid-range phone performance | Small map, generated textures, fixed-step update, ≤ 4 NPCs, avoid shadows/filters. |
@@ -81,3 +81,12 @@ Status: **M1-M7 done.** The user said to decide everything; these are the calls 
 11. **Facts.** Only the six facts in the brief plus four we found with real sources (lunar dust, micrometeoroids, ISS family video calls, ISS sleep schedule) and three stories (Apollo 13, the August 1972 storm, Opportunity). Where a source is a news page repeating NASA material it is flagged `secondary` in `facts.json` and in Scientist mode. The Apollo 13 story links to Wikipedia because nasa.gov was not reachable from the build machine (marked `todo` in `facts.json`).
 12. **Balance targets.** Final run (531,274 cargos x 200 seeds, see README): best cargo 90.5 % and none above 95 % (target met); thoughtful cargos 82.1 % (met); random cargos 0.6 % against a 20-30 % target (**not met**). With the brief's own numbers 18 of the 20 mass units are needed just for consumables, so blind random cargos almost never survive. We kept the brief's numbers (that tension is the lesson) and added Radar's plan check on the pack screen (a dry run of a quiet mission that says what runs short and when), Easy mode with a working suggested cargo, and fast failure (a bad cargo ends in days). The README says which knobs make random play gentler.
 13. **Default language:** the browser language (Arabic if it starts with "ar", otherwise English), remembered in localStorage; `?lang=ar|en` overrides it.
+
+## v2 (after playtesting): first person, cut-scene, easier
+Feedback: "make it first person with walking, jumping and running; it was a bit hard (could not finish 30 days in two tries); nice graphics; a cut-scene of the launch from Earth, the trip and the Moon landing".
+
+14. **Engine swap:** Phaser 2D map replaced by a **three.js first-person world** (`src/game/world/`). Terrain is a deterministic height field with craters, flattened around the base; modules, crew, lander and rocket are built from primitives; all textures are painted on canvases at start-up. Low sun from the south-east (long shadows), Earth low over the northern horizon, bloom on desktop only.
+15. **Movement:** walk 4.6 m/s, run 8.5 m/s (Shift / Run button), jump with real Moon gravity 1.62 m/s² (new sourced fact `moon_gravity`, shown in the menu and by Radar on the first jump). Mouse-look uses pointer lock; arrow keys also turn, so a mouse is optional. Phones: left stick, drag on the right half to look, Jump / Run / Action buttons.
+16. **Layout in metres:** `layout.ts` now holds the base in metres (habitat at the origin, the reactor ~47 m away). Interaction stays proximity-based (stand near a module, press E) because aiming is hard for young kids; a goal arrow at the top of the view points to the current task or storm cover with the distance.
+17. **Cut-scene (~21 s, skippable):** countdown and lift-off on Earth, stage separation and cruise (Earth behind, Moon ahead), powered descent over the base and touchdown. Subtitles are i18n strings with no invented numbers ("the trip takes a few days", "no air, so no parachutes").
+18. **Easier by default:** new **Easy mode** (on by default) = `params.json` + `difficulty.easy` overrides: habitat stores 40 oxygen/water/food, gentler health penalties, storm dose 50, 30 s storm countdown, 3-4 surprises, smaller leak. Normal ("Challenge") keeps the brief's numbers. Easy balance: see README.

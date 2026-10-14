@@ -7,6 +7,7 @@
  *
  *   npm run balance                 (200 seeds, all cores)
  *   npm run balance -- --seeds 20   (quick check)
+ *   npm run balance -- --difficulty easy   (the kids' default rules)
  *
  * The simulated commander uses the smart policy, but hands-on actions (run to the shelter,
  * find the leak, scan the rock...) only succeed with probability SKILL, like a real kid.
@@ -14,7 +15,12 @@
 import { fork } from 'node:child_process';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { CONFIG } from '../src/engine/config';
+import { configFor } from '../src/engine/config';
+import type { Difficulty } from '../src/engine/types';
+
+const di = process.argv.indexOf('--difficulty');
+const DIFFICULTY: Difficulty = di >= 0 && process.argv[di + 1] === 'easy' ? 'easy' : 'normal';
+const CONFIG = configFor(DIFFICULTY);
 import { ITEM_ORDER, cargoLabel, cargoMass, enumerateCargos } from '../src/engine/cargo';
 import { simulate } from '../src/engine/policy';
 import { coversBasics, has, isThoughtful, kidPolicy } from './balanceLib';
@@ -69,7 +75,7 @@ async function main() {
   const sample = sampleI >= 0 ? Number(args[sampleI + 1]) : 1;
   const all = [...enumerateCargos(CONFIG)].filter((_, i) => i % sample === 0);
   const threads = Math.max(1, Math.min(os.cpus().length, 8));
-  console.log(`Cargos within ${CONFIG.params.massBudget} mass: ${all.length}. Seeds: ${seeds}. Threads: ${threads}.`);
+  console.log(`Difficulty: ${DIFFICULTY}. Cargos within ${CONFIG.params.massBudget} mass: ${all.length}. Seeds: ${seeds}. Threads: ${threads}.`);
   const t0 = Date.now();
 
   // Strided split so every worker gets a similar mix of cheap and expensive cargos.
@@ -79,7 +85,7 @@ async function main() {
     chunks.map(
       (_, k) =>
         new Promise<{ wins: number[]; starSum: number[] }>((resolve, reject) => {
-          const child = fork(fileURLToPath(import.meta.url), ['--worker', String(k), String(threads), String(seeds), '--sample', String(sample)], {
+          const child = fork(fileURLToPath(import.meta.url), ['--worker', String(k), String(threads), String(seeds), '--sample', String(sample), '--difficulty', DIFFICULTY], {
             execArgv: ['--import', 'tsx'],
           });
           child.once('message', (m) => resolve(m as { wins: number[]; starSum: number[] }));
@@ -98,7 +104,7 @@ async function main() {
   const isFull = (r: Row) => cargoMass(r.cargo, CONFIG) >= CONFIG.params.massBudget - 1;
   const fullRandom = rows.filter(isFull);
   const full = rows.filter((r) => isFull(r) && coversBasics(r.cargo));
-  const thoughtful = rows.filter((r) => isThoughtful(r.cargo));
+  const thoughtful = rows.filter((r) => isThoughtful(r.cargo, CONFIG));
   const best = rows.reduce((a, r) => (rate(r) > rate(a) ? r : a));
   const above95 = rows.filter((r) => rate(r) > 0.95).length;
 

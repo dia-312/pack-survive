@@ -4,7 +4,8 @@ A Moon-base mission trainer for kids aged 9-13, made for **NASA Space Apps 2026*
 (challenge: *Junior Astronaut Mission Trainer*).
 
 You are the commander of a crew of four. Earth sends one small lander (20 mass units).
-Pack it, land, then **walk around a 2D Moon base** and keep everyone alive for 30 days:
+Pack it, watch the **launch from Earth, the trip and the Moon landing**, then explore the base
+**in first person, in 3D**: walk, run and jump in Moon gravity, and keep everyone alive for 30 days:
 power, oxygen, water, food and radiation all pull on the same tiny budget.
 Nobody dies in this game. If things go wrong the crew is **evacuated** and flies home safe.
 
@@ -24,8 +25,9 @@ questions: the hardest choice, why it ended that way, and what you learned about
 ```bash
 npm install
 npm run dev        # play at http://localhost:5173
-npm test           # 76 Vitest tests (engine, data files, translations)
-npm run balance    # cargo balance report (see below)
+npm test           # 79 Vitest tests (engine, difficulty, data files, translations)
+npm run balance    # cargo balance report, Challenge rules (see below)
+npm run balance -- --difficulty easy   # the same for Easy mode
 npm run build      # static site in dist/
 ```
 
@@ -37,9 +39,13 @@ Handy address parameters:
 | `?seed=123` | replay exactly the same mission (storm day, situations...) |
 | `?daysec=5` | make a mission day 5 seconds instead of 20 (for testing) |
 
-Controls: **WASD / arrows** to walk, **E / Space** to open the module you stand next to (a quick tap),
-or **hold** it near a glowing ring to repair, clean, patch or scan. On phones: the joystick and the big
-action button. Time pauses while a panel or card is open.
+Controls (desktop): **WASD** walk (arrow keys walk and turn), **click** the view then move the **mouse** to look,
+**Space** jump, **Shift** run, **E** opens the module you stand next to (a quick tap) or, **held** near a glowing ring,
+repairs, cleans, patches or scans. Phones: left stick to walk, drag on the right to look, **Jump / Run / Action** buttons.
+Time pauses while a panel or card is open. The cut-scene can be skipped.
+
+**Easy mode** is on by default (bigger habitat stores, gentler storms, fewer surprises). Turn it off on the start
+screen for the full "Challenge" rules from the brief.
 
 ## Deploy (Vercel or any static host)
 `npm run build` writes a static site to `dist/` (relative asset paths, so it works from any sub-folder).
@@ -47,18 +53,18 @@ action button. Time pauses while a panel or card is open.
 * **Vercel**: import the repository, framework preset *Vite*, build command `npm run build`, output directory `dist`. No environment variables.
 * **Anything else** (GitHub Pages, Netlify, an S3 bucket...): upload the contents of `dist/`.
 
-Phaser (about 340 kB gzipped) is loaded only when the lander touches down, so the start, briefing and pack screens open fast.
+three.js (about 130 kB gzipped) is loaded only when you press Launch, so the start, briefing and pack screens open fast.
 
 ## How it is built
-* **Vite + TypeScript.** Phaser 3 draws the explorable map; React draws the HUD, panels, cards and menus (so Arabic text renders correctly).
-* `src/engine` - the simulation in pure TypeScript (no Phaser/React): seeded RNG (mulberry32), daily tick, end checks, situations, scoring, cargo plan. Tested with Vitest.
-* `src/game` - Phaser scene (`BaseScene`), the day clock / situations / tasks (`controller.ts`), art drawn in code (`art.ts`), map layout.
+* **Vite + TypeScript.** three.js draws the first-person Moon base and the cut-scene; React draws the HUD, panels, cards and menus (so Arabic text renders correctly).
+* `src/engine` - the simulation in pure TypeScript (no three.js/React): seeded RNG (mulberry32), daily tick, end checks, situations, scoring, cargo plan. Tested with Vitest.
+* `src/game` - the day clock / situations / tasks (`controller.ts`), the base layout in metres (`layout.ts`) and `world/`: terrain height field with craters, models built from primitives, canvas-painted textures, the first-person `MoonBase` and the `Cutscene`.
 * `src/ui` - React overlay: screens, HUD, module panels, situation cards, report, joystick.
-* `src/data` - `params.json`, `items.json`, `events.json`, `facts.json`. Balance values live here, not in code.
+* `src/data` - `params.json` (including the `difficulty.easy` overrides), `items.json`, `events.json`, `facts.json`. Balance values live here, not in code.
 * `src/i18n` - `en.json`, `ar.json`. All text goes through `t()`; a test checks both files have the same keys and that every key used in the code exists.
 * `scripts/balance.ts` - plays every cargo within 20 mass over many seeds.
 
-All art is made in code (Phaser Graphics textures and inline SVG). The mascot **Radar** is an original character. No NASA logo, no copyrighted characters.
+All art is made in code (three.js primitives, textures painted on canvases at start-up, inline SVG). The mascot **Radar** is an original character. No NASA logo, no copyrighted characters.
 Palette: navy `#14213D`, cream `#F6F3EC`, orange `#F28C28`, blue `#3FA7D6`, light blue `#8FD3F0`, Moon gray `#C9C2B3`.
 
 ### The daily tick (in this order)

@@ -1,6 +1,7 @@
+import { configFor } from '../engine/config';
 import { createMission } from '../engine/mission';
 import type { Cargo } from '../engine/types';
-import { setState } from '../ui/store';
+import { getState, setState } from '../ui/store';
 
 /** A mission seed: ?seed=123 in the address replays a mission exactly. */
 export function pickSeed(): number {
@@ -14,7 +15,7 @@ export function pickSeed(): number {
 }
 
 export function startMission(cargo: Cargo, seed: number = pickSeed()): void {
-  const mission = createMission(cargo, seed);
+  const mission = createMission(cargo, seed, configFor(getState().easy ? 'easy' : 'normal'));
   setState({
     cargo: { ...cargo },
     seed,

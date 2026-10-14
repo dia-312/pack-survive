@@ -1,4 +1,4 @@
-import { CONFIG } from './config';
+import { configFor } from './config';
 import { clamp, r3, resolveEvent, startDay, sunFactor } from './mission';
 import {
   SYSTEM_ORDER,
@@ -18,7 +18,7 @@ export interface PowerPlan {
 }
 
 /** What would run today, in priority order (also used by the UI to show "needs power"). */
-export function planPower(s: MissionState, cfg: Config = CONFIG): PowerPlan {
+export function planPower(s: MissionState, cfg: Config = configFor(s.difficulty)): PowerPlan {
   const { params: P, items: I } = cfg;
   const fx = s.effects;
   const sun = sunFactor(s.day, cfg);
@@ -62,7 +62,7 @@ export function planPower(s: MissionState, cfg: Config = CONFIG): PowerPlan {
  *  5 radiation      6 health & morale         7 end checks
  * Mutates and returns the day's log entry. An unresolved situation takes its default choice.
  */
-export function tick(s: MissionState, cfg: Config = CONFIG): DayLog {
+export function tick(s: MissionState, cfg: Config = configFor(s.difficulty)): DayLog {
   if (s.status !== 'running') throw new Error('mission is over');
   const { params: P, items: I } = cfg;
   if (s.pending) resolveEvent(s, s.pending, cfg.events[s.pending].default, cfg);

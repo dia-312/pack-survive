@@ -7,7 +7,7 @@ import {
   removeItem,
   SUGGESTED_CARGO,
 } from './cargo';
-import { CONFIG, withParams } from './config';
+import { CONFIG, configFor, withParams } from './config';
 import {
   availableChoices,
   buildSchedule,
@@ -704,5 +704,30 @@ describe('maintenance actions', () => {
     expect(harvest(s)).toBe(true);
     expect(s.morale).toBe(m2 + 3);
     expect(harvest(s)).toBe(false); // cooldown
+  });
+});
+
+describe('difficulty', () => {
+  it('easy mode only changes the values listed under difficulty.easy', () => {
+    const easy = configFor('easy');
+    expect(easy.difficulty).toBe('easy');
+    expect(easy.params.startOxygen).toBeGreaterThan(CONFIG.params.startOxygen);
+    expect(easy.params.health.noWater).toBeGreaterThan(CONFIG.params.health.noWater);
+    expect(easy.params.health.recover).toBe(CONFIG.params.health.recover); // deep merge keeps the rest
+    expect(easy.params.massBudget).toBe(CONFIG.params.massBudget);
+    expect(easy.items).toBe(CONFIG.items);
+    expect(configFor('normal').params.startOxygen).toBe(CONFIG.params.startOxygen);
+  });
+  it('a mission remembers its difficulty and ticks with those rules', () => {
+    const s = createMission({ food: 1 }, 1, configFor('easy'));
+    expect(s.difficulty).toBe('easy');
+    expect(s.oxygen).toBe(40);
+    while (s.status === 'running') tick(s);
+    expect(s.endDay).toBeGreaterThan(3); // 40 stored oxygen lasts 10 days
+  });
+  it('easy is easier: the suggested cargo nearly always finishes', () => {
+    let ok = 0;
+    for (let seed = 1; seed <= 60; seed++) if (simulate(SUGGESTED_CARGO, seed, smartPolicy, configFor('easy')).status === 'success') ok++;
+    expect(ok).toBe(60);
   });
 });

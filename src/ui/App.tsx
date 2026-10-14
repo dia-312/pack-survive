@@ -5,7 +5,7 @@ import { StartScreen } from './screens/StartScreen';
 import { useStore } from './store';
 import { useT } from './useT';
 
-// Phaser is big: load it only when the kid actually lands on the Moon.
+// The 3D engine is big: load it only when the kid actually launches.
 const PlayScreen = lazy(() => import('./screens/PlayScreen'));
 const ReportScreen = lazy(() => import('./screens/ReportScreen'));
 

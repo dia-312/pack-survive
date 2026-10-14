@@ -98,5 +98,27 @@
     "maxDose": 70,
     "minMorale": 50,
     "lateEvacuationDay": 20
+  },
+  "difficulty": {
+    "_note": "Easy mode (the default for kids) changes only these values. Normal = the values above.",
+    "easy": {
+      "startOxygen": 40,
+      "startWater": 40,
+      "startFood": 40,
+      "health": {
+        "noFood": -5,
+        "noWater": -10,
+        "cold": -3
+      },
+      "stormDoseMSv": 50,
+      "stormCountdownSeconds": 30,
+      "randomEventCount": [
+        3,
+        4
+      ],
+      "effects": {
+        "leakOxygenPerDay": 2
+      }
+    }
   }
 }

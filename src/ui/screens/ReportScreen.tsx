@@ -1,4 +1,4 @@
-import { CONFIG } from '../../engine/config';
+import { configFor } from '../../engine/config';
 import { ITEM_ORDER } from '../../engine/cargo';
 import { averageHealth, stars, TURNING_LINKS, turningPoint } from '../../engine/score';
 import { startMission } from '../../game/session';
@@ -13,6 +13,7 @@ import { Stars } from './StartScreen';
 export default function ReportScreen() {
   const { t, lang } = useT();
   const m = useStore((s) => s.mission)!;
+  const CONFIG = configFor(m.difficulty);
   const best = useStore((s) => s.best);
   const answers = useStore((s) => s.answers);
   const scientist = useStore((s) => s.scientist);

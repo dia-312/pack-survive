@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { CONFIG } from '../../engine/config';
+import { configFor } from '../../engine/config';
 import { availableChoices, canRepair, sunFactor } from '../../engine/mission';
 import { planPower } from '../../engine/tick';
 import type { EventId, SystemId } from '../../engine/types';
@@ -123,6 +123,7 @@ function HoldButton({ seconds, label, holding, onDone }: { seconds: number; labe
 function ModulePanel({ id }: { id: ModuleId }) {
   const { t, lang } = useT();
   const m = useMission();
+  const CONFIG = configFor(m.difficulty);
   const scientist = useStore((s) => s.scientist);
   const P = CONFIG.params;
   const st = moduleStatus(id, m);
@@ -372,6 +373,7 @@ function ModulePanel({ id }: { id: ModuleId }) {
 function SituationCard({ ev, phase, choice, timeout }: { ev: EventId; phase: 'ask' | 'result'; choice?: string; timeout: boolean }) {
   const { t } = useT();
   const m = useMission();
+  const CONFIG = configFor(m.difficulty);
   const def = CONFIG.events[ev];
   const hasShelter = (m.cargo.shelter ?? 0) > 0;
 
@@ -483,6 +485,7 @@ function MenuOverlay() {
         <li>{t('menu.help3')}</li>
         <li>{t('menu.help4')}</li>
       </ul>
+      <FactBox id="moon_gravity" />
       <div className="modal-foot">
         {!sure ? (
           <button className="btn ghost dark" onClick={() => setSure(true)}>

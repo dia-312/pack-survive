@@ -95,10 +95,10 @@ export function ActionButton() {
       aria-label={label}
       onPointerDown={(e) => {
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-        actionDown();
+        actionDown(e.timeStamp);
       }}
-      onPointerUp={() => actionUp()}
-      onPointerCancel={() => actionUp()}
+      onPointerUp={(e) => actionUp(e.timeStamp)}
+      onPointerCancel={(e) => actionUp(e.timeStamp)}
       onContextMenu={(e) => e.preventDefault()}
     >
       <svg viewBox="0 0 100 100" className="action-ring" aria-hidden="true">
@@ -120,5 +120,62 @@ export function ActionButton() {
       </span>
       <span className="action-label">{label}</span>
     </button>
+  );
+}
+
+/** Phones: drag anywhere on the right part of the screen to look around. */
+export function LookPad() {
+  const last = useRef<{ id: number; x: number; y: number } | null>(null);
+  return (
+    <div
+      className="lookpad"
+      onPointerDown={(e) => {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        last.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      }}
+      onPointerMove={(e) => {
+        const l = last.current;
+        if (!l || l.id !== e.pointerId) return;
+        input.lookDX += e.clientX - l.x;
+        input.lookDY += e.clientY - l.y;
+        last.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      }}
+      onPointerUp={() => (last.current = null)}
+      onPointerCancel={() => (last.current = null)}
+    />
+  );
+}
+
+export function JumpRunButtons() {
+  const { t } = useT();
+  const [run, setRun] = useState(false);
+  return (
+    <>
+      <button
+        className="round-btn jump-btn"
+        aria-label={t('hud.jump')}
+        onPointerDown={(e) => {
+          e.preventDefault();
+          input.jump = true;
+        }}
+      >
+        <span aria-hidden="true">⤒</span>
+        <small>{t('hud.jump')}</small>
+      </button>
+      <button
+        className={`round-btn run-btn${run ? ' on' : ''}`}
+        aria-pressed={run}
+        aria-label={t('hud.run')}
+        onPointerDown={(e) => {
+          e.preventDefault();
+          const next = !run;
+          setRun(next);
+          input.run = next;
+        }}
+      >
+        <span aria-hidden="true">»</span>
+        <small>{t('hud.run')}</small>
+      </button>
+    </>
   );
 }

@@ -143,6 +143,20 @@
         "url": "https://www.space.com/26829-astronauts-space-station-sleep-deprivation.html",
         "secondary": true
       }
+    },
+    "moon_gravity": {
+      "kid": {
+        "en": "The Moon pulls on you much less than Earth does, so you can jump higher and fall slowly. That is why Apollo astronauts hopped around!",
+        "ar": "يجذبك القمر أقل بكثير من الأرض، لذلك تقفز أعلى وتسقط ببطء. ولهذا كان روّاد أبولو يقفزون قفزًا!"
+      },
+      "scientist": {
+        "en": "Surface gravity on the Moon is 1.62 m/s², about 0.165 of Earth's 9.80 m/s² (NASA Moon Fact Sheet). The game uses 1.62 m/s² for your jumps.",
+        "ar": "الجاذبية على سطح القمر 1.62 م/ث²، أي نحو 0.165 من جاذبية الأرض البالغة 9.80 م/ث² (صحيفة حقائق القمر من ناسا). تستخدم اللعبة 1.62 م/ث² لقفزاتك."
+      },
+      "source": {
+        "title": "NASA NSSDC - Moon Fact Sheet",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      }
     }
   },
   "stories": {

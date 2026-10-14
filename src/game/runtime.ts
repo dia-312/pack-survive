@@ -1,4 +1,4 @@
-/** Lets the UI pause the Phaser game right before its canvas leaves the page (no Phaser import here). */
+/** Lets the UI stop the 3D world right before its canvas leaves the page (no three.js import here). */
 let stopper: (() => void) | null = null;
 
 export function setStopper(fn: (() => void) | null): void {
@@ -11,4 +11,13 @@ export function stopGame(): void {
   } catch {
     /* already gone */
   }
+}
+
+let skipper: (() => void) | null = null;
+export function setSkipper(fn: (() => void) | null): void {
+  skipper = fn;
+}
+/** Skip the launch / landing cut-scene. */
+export function skipCutscene(): void {
+  skipper?.();
 }

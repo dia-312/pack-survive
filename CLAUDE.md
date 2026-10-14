@@ -15,13 +15,13 @@ Kids aged 9–13 command a 30-day Moon-base mission and feel the engineering tra
 - Nothing relies on color alone: status = icon + color + shape.
 
 ## Architecture
-- **Vite + TypeScript.** Phaser 3 = explorable map. React = overlay (HUD, panels, cards, menus).
-- `src/engine/` — pure TypeScript simulation + Vitest tests. **No Phaser/React imports. No `Math.random`**
+- **Vite + TypeScript.** three.js = first-person 3D Moon base + launch/landing cut-scene. React = overlay (HUD, panels, cards, menus).
+- `src/engine/` — pure TypeScript simulation + Vitest tests. **No three.js/React imports. No `Math.random`**
   (use the seeded `mulberry32` RNG so a seed replays exactly).
-- `src/game/` — Phaser scenes. `src/ui/` — React overlay. `src/i18n/` — `ar.json`, `en.json`.
+- `src/game/` — controller (day clock, situations, tasks) + `world/` (three.js: terrain, models, MoonBase, Cutscene). `src/ui/` — React overlay. `src/i18n/` — `ar.json`, `en.json`.
 - `src/data/` — `params.json`, `items.json`, `events.json`, `facts.json`. Balance values live here, not in code.
 - `scripts/balance.ts` — enumerates all cargos ≤ 20 mass over 200 seeds.
-- Phaser ↔ React talk through a small typed event bus; the engine state is the single source of truth.
+- The 3D world and React share the store + `controller.view`; the engine state is the single source of truth.
 
 ## Simulation (daily tick, in this order)
 1. Produce power (panels × sun factor + reactor)
@@ -39,7 +39,7 @@ time pauses while any panel/card is open · max 1 new situation/day, 4–6 per r
 
 ## Conventions
 - All user-visible text goes through i18n (Arabic RTL + English). Switch `dir` on the overlay root; use logical CSS properties.
-- All art generated in code (Phaser Graphics → textures, or inline SVG). Original characters only (mascot: robot "Radar"). No NASA logo, no copyrighted characters.
+- All art generated in code (three.js primitives, canvas-painted textures, inline SVG). Original characters only (mascot: robot "Radar"). No NASA logo, no copyrighted characters.
 - Palette: navy `#14213D`, cream `#F6F3EC`, orange `#F28C28`, blue `#3FA7D6`, light blue `#8FD3F0`, Moon gray `#C9C2B3`.
 - Fonts: Fredoka + Nunito (EN), Tajawal / IBM Plex Sans Arabic (AR), with system fallbacks.
 - Mobile: on-screen joystick + big action button, touch targets ≥ 44 px, smooth on a mid-range phone.
@@ -47,8 +47,10 @@ time pauses while any panel/card is open · max 1 new situation/day, 4–6 per r
 
 ## Handy facts for working on it
 - Address params: `?lang=ar|en`, `?seed=N` (replay a mission), `?daysec=N` (shorter days for testing).
-- Dev server only: `window.__pack` exposes `getState`, `setState`, `startMission`, `controller` (`controller.debug.teleport(x, y)`, `controller.view.task`) for scripted tests and screenshots.
-- Phaser never renders Arabic text; all text is React DOM. The mascot is Radar (original), crew = you + Layan + Omar + Maya, Kenji = Mission Control.
+- Difficulty: Easy (default) = `params.json` + `difficulty.easy` overrides via `configFor('easy')`; a mission stores its `difficulty`.
+- Controls: WASD/arrows, mouse look (pointer lock), Space jump (Moon gravity 1.62 m/s²), Shift run, E open/hold. Touch: stick, drag-to-look, Jump/Run/Action buttons.
+- Dev server only: `window.__pack` exposes `getState`, `setState`, `startMission`, `controller` (`controller.debug.teleport(x, y)` in metres, `debug.overview()`, `debug.seekCutscene(t)`, `controller.view.task`) for scripted tests and screenshots.
+- The 3D world never renders text; all text is React DOM. The mascot is Radar (original), crew = you + Layan + Omar + Maya, Kenji = Mission Control.
 - Decisions and assumptions are recorded in `PLAN.md` ("Decisions taken while building").
 - A test (`src/engine/i18n.test.ts`) fails if `ar.json` and `en.json` differ or a `t('key')` used in code is missing.
 

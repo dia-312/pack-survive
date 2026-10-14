@@ -31,6 +31,8 @@ export type EventId =
   | 'home'
   | 'tired';
 
+export type Difficulty = 'easy' | 'normal';
+
 export type Protection = 'shelter' | 'hide' | 'none';
 export type Status = 'running' | 'success' | 'evacuated';
 export type EndReason = 'success' | 'oxygen' | 'medical' | 'radiation';
@@ -122,6 +124,7 @@ export interface Params {
 }
 
 export interface Config {
+  difficulty: Difficulty;
   params: Params;
   items: Record<ItemId, ItemDef>;
   events: Record<EventId, EventDef>;
@@ -204,6 +207,7 @@ export interface DayLog {
 
 export interface MissionState {
   seed: number;
+  difficulty: Difficulty;
   cargo: Cargo;
   day: number;
   status: Status;

@@ -1,4 +1,4 @@
-import { CONFIG } from '../engine/config';
+import { configFor } from '../engine/config';
 import {
   availableChoices,
   canRepair,
@@ -9,7 +9,6 @@ import {
   sunFactor,
   useSpare,
 } from '../engine/mission';
-import { makeRng } from '../engine/rng';
 import { stopGame } from './runtime';
 import { stars } from '../engine/score';
 import { tick } from '../engine/tick';
@@ -26,15 +25,29 @@ import {
 } from '../ui/store';
 import {
   HIDE_SPOT,
-  LEAK_SPOTS,
-  ROCK_SPOTS,
+  HINT_DIST,
+  STORM_SHELTER_R,
+  TASK_RADIUS,
+  leakSpot,
+  rockSpot,
   frontPoint,
   modulesFor,
   moduleById,
 } from './layout';
 
 /** Shared input state: keyboard, touch joystick and the action button all feed this. */
-export const input = { joyX: 0, joyY: 0, actionHeld: false };
+export const input = {
+  joyX: 0,
+  joyY: 0,
+  actionHeld: false,
+  /** touch look: accumulated drag in pixels since the last frame */
+  lookDX: 0,
+  lookDY: 0,
+  /** one-shot jump request (button or Space) */
+  jump: false,
+  /** run toggle on touch screens */
+  run: false,
+};
 
 export interface TaskRuntime {
   event: EventId;
@@ -58,13 +71,15 @@ export interface StormRuntime {
   shelter: boolean;
 }
 
-/** What the Phaser scene needs to draw. Updated in place every frame. */
+/** What the 3D world needs to draw. Updated in place every frame. */
 export const view: {
   task: TaskRuntime | null;
   storm: StormRuntime | null;
   dark: boolean;
   stormHit: number;
-} = { task: null, storm: null, dark: false, stormHit: 0 };
+  /** direction to the current goal, relative to where the player looks (radians, 0 = straight ahead) */
+  pointer: { active: boolean; angle: number; dist: number };
+} = { task: null, storm: null, dark: false, stormHit: 0, pointer: { active: false, angle: 0, dist: 0 } };
 
 const HANDS: Partial<Record<EventId, Record<string, { hold: number; kind: TaskRuntime['kind']; module?: ModuleId; label: string }>>> = {
   recycler_break: { spare: { hold: 0.8, kind: 'module', module: 'recycler', label: 'task.repair' } },
@@ -75,7 +90,11 @@ const HANDS: Partial<Record<EventId, Record<string, { hold: number; kind: TaskRu
 };
 
 /** Dev-only hooks so tests and screenshots can move the player and zoom out. */
-export const debug: { teleport?: (x: number, y: number) => void; overview?: () => void } = {};
+export const debug: {
+  teleport?: (x: number, y: number) => void;
+  overview?: () => void;
+  seekCutscene?: (t: number) => void;
+} = {};
 
 const ANNOUNCE_AT = 2;
 
@@ -87,7 +106,7 @@ export function secondsPerDay(): number {
   } catch {
     /* ignore */
   }
-  return CONFIG.params.secondsPerDay;
+  return cfg().params.secondsPerDay;
 }
 let dayTime = 0;
 let announced = false;
@@ -97,6 +116,8 @@ let player = { x: 0, y: 0 };
 let endingTimer: ReturnType<typeof setTimeout> | null = null;
 
 const mission = (): MissionState => getState().mission!;
+/** The rules of the mission being played (easy or normal). */
+const cfg = () => configFor(getState().mission?.difficulty ?? 'normal');
 
 export function resetController(): void {
   dayTime = 0;
@@ -110,7 +131,13 @@ export function resetController(): void {
 }
 
 export function onLanded(): void {
-  setState({ landing: false, radar: { key: 'radar.landed' } });
+  let touch = false;
+  try {
+    touch = window.matchMedia('(pointer: coarse)').matches;
+  } catch {
+    /* ignore */
+  }
+  setState({ landing: false, radar: { key: touch ? 'radar.landedTouch' : 'radar.landed' } });
 }
 
 function onDayStart(): void {
@@ -190,7 +217,7 @@ export function update(dt: number, px: number, py: number): void {
     const closeEnough = d < t.r;
     if (input.actionHeld && closeEnough) t.held += dt;
     else t.held = Math.max(0, t.held - dt * 1.5);
-    const hint: TaskInfo['hint'] = t.kind === 'leak' ? (d < 130 ? 'hot' : d < 320 ? 'warm' : 'cold') : undefined;
+    const hint: TaskInfo['hint'] = t.kind === 'leak' ? (d < HINT_DIST.hot ? 'hot' : d < HINT_DIST.warm ? 'warm' : 'cold') : undefined;
     uiTimer += dt;
     if (uiTimer > 0.06) {
       uiTimer = 0;
@@ -232,7 +259,7 @@ export function chooseCard(choice: string): void {
   const ov = s.overlay;
   if (!m || !ov || ov.kind !== 'card' || ov.phase !== 'ask') return;
   const ev = ov.event;
-  if (!availableChoices(m, ev, CONFIG).includes(choice)) return;
+  if (!availableChoices(m, ev, cfg()).includes(choice)) return;
 
   const hands = HANDS[ev]?.[choice];
   if (hands) {
@@ -240,24 +267,22 @@ export function chooseCard(choice: string): void {
     const mod = hands.module ? moduleById(hands.module) : null;
     let x = 0;
     let y = 0;
-    let r = 60;
+    let r = 2;
     if (mod) {
       const f = frontPoint(mod);
       x = f.x;
       y = f.y;
-      r = mod.reach * 0.75;
+      r = mod.reach;
     } else if (hands.kind === 'leak') {
-      const rng = makeRng(m.seed * 31 + m.day);
-      const p = rng.pick(LEAK_SPOTS);
+      const p = leakSpot(m.seed, m.day);
       x = p.x;
       y = p.y;
-      r = 46;
+      r = TASK_RADIUS.leak;
     } else {
-      const rng = makeRng(m.seed * 17 + m.day);
-      const p = rng.pick(ROCK_SPOTS);
+      const p = rockSpot(m.seed, m.day);
       x = p.x;
-      y = p.y + 20;
-      r = 70;
+      y = p.y;
+      r = TASK_RADIUS.rock;
     }
     view.task = { event: ev, choice, labelKey: hands.label, x, y, r, holdSec: hands.hold, held: 0, kind: hands.kind, module: hands.module };
     setState({
@@ -286,10 +311,10 @@ function startStorm(): void {
     const mod = moduleById('shelter');
     const f = frontPoint(mod);
     x = f.x;
-    y = f.y - 10;
-    r = 90;
+    y = f.y;
+    r = STORM_SHELTER_R;
   }
-  const total = CONFIG.params.stormCountdownSeconds;
+  const total = cfg().params.stormCountdownSeconds;
   view.storm = { remaining: total, total, x, y, r, shelter: hasShelter };
   setState({ storm: { remaining: total, total }, radar: { key: hasShelter ? 'radar.storm.shelter' : 'radar.storm.hide' } });
 }
@@ -310,12 +335,12 @@ function completeTask(t: TaskRuntime): void {
 /** Apply the choice in the engine, then show what happened plus a "Did you know?" fact. */
 function resolveWithResult(ev: EventId, choice: string): void {
   const m = mission();
-  const ok = resolveEvent(m, ev, choice, CONFIG);
+  const ok = resolveEvent(m, ev, choice, cfg());
   touchMission();
   view.task = null;
   setState({
     task: null,
-    overlay: { kind: 'card', event: ev, phase: 'result', choice: ok ? choice : CONFIG.events[ev].default },
+    overlay: { kind: 'card', event: ev, phase: 'result', choice: ok ? choice : cfg().events[ev].default },
   });
 }
 
@@ -337,7 +362,7 @@ function endDay(): void {
   const prevDay = m.day;
   view.task = null;
   setState({ task: null });
-  const log = tick(m, CONFIG);
+  const log = tick(m, cfg());
   touchMission();
   for (const code of log.alerts) {
     const sys = m.alerts.filter((a) => a.day === prevDay && a.code === code).map((a) => a.system);
@@ -364,7 +389,7 @@ function endDay(): void {
 
 function finishMission(): void {
   const m = mission();
-  const st = stars(m, CONFIG);
+  const st = stars(m, cfg());
   const prev = getState().best;
   const result = { stars: st, success: m.status === 'success', day: m.endDay ?? m.day };
   if (!prev || result.stars > prev.stars || (result.stars === prev.stars && result.success && !prev.success)) {
@@ -418,7 +443,7 @@ export function cleanPanels(): void {
     resolveWithResult('dust', 'clean');
     return;
   }
-  if (cleanDust(m, CONFIG)) {
+  if (cleanDust(m, cfg())) {
     touchMission();
     pushToast({ tone: 'good', key: 'toast.cleaned' });
   }
@@ -426,7 +451,7 @@ export function cleanPanels(): void {
 
 export function harvestPlants(): void {
   const m = mission();
-  if (harvest(m, CONFIG)) {
+  if (harvest(m, cfg())) {
     touchMission();
     pushToast({ tone: 'good', key: 'toast.harvested' });
   }
@@ -434,19 +459,25 @@ export function harvestPlants(): void {
 
 // --- action button (keyboard E / Space or the on-screen button) ----------------------------------
 
-export function actionDown(): void {
+/** Window lost focus: let go of the button without counting it as a tap. */
+export function actionCancel(): void {
+  input.actionHeld = false;
+}
+
+/** `at` = the input event's timeStamp, so a slow frame does not turn a tap into a hold. */
+export function actionDown(at: number = performance.now()): void {
   input.actionHeld = true;
-  pressTime = performance.now();
+  pressTime = at;
 }
 
 /** A quick tap opens the nearby module's panel; holding is for hands-on tasks. */
-export function actionUp(): void {
+export function actionUp(at: number = performance.now()): void {
   const wasHeld = input.actionHeld;
   input.actionHeld = false;
   if (!wasHeld) return;
   const s = getState();
   if (isPaused(s) || s.mission?.status !== 'running') return;
-  const tapped = performance.now() - pressTime < 280;
+  const tapped = at - pressTime < 350;
   if (tapped && !view.storm) {
     const near = nearbyModule(player.x, player.y);
     if (near) openModule(near);

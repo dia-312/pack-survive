@@ -1,4 +1,4 @@
-import { CONFIG } from './config';
+import { CONFIG, configFor } from './config';
 import { makeRng } from './rng';
 import {
   SYSTEM_ORDER,
@@ -69,6 +69,7 @@ export function createMission(cargo: Cargo, seed: number, cfg: Config = CONFIG):
   const cap = n('battery') * (I.battery.capacity ?? 0);
   const s: MissionState = {
     seed,
+    difficulty: cfg.difficulty,
     cargo: { ...cargo },
     day: 1,
     status: 'running',
@@ -113,7 +114,7 @@ export function createMission(cargo: Cargo, seed: number, cfg: Config = CONFIG):
 }
 
 /** Called when a new day begins: raises today's situation (if any) and applies its immediate effect. */
-export function startDay(s: MissionState, cfg: Config = CONFIG): void {
+export function startDay(s: MissionState, cfg: Config = configFor(s.difficulty)): void {
   const ev = s.schedule.events[s.day] ?? null;
   s.pending = ev;
   if (!ev) return;
@@ -134,7 +135,7 @@ export function startDay(s: MissionState, cfg: Config = CONFIG): void {
 }
 
 /** Which choices are possible right now (e.g. "use a spare part" needs one in stock). */
-export function availableChoices(s: MissionState, ev: EventId, cfg: Config = CONFIG): string[] {
+export function availableChoices(s: MissionState, ev: EventId, cfg: Config = configFor(s.difficulty)): string[] {
   return cfg.events[ev].choices.filter((c) => !(c === 'spare' && s.spares < 1));
 }
 
@@ -146,7 +147,7 @@ export function resolveEvent(
   s: MissionState,
   ev: EventId,
   choice: string,
-  cfg: Config = CONFIG,
+  cfg: Config = configFor(s.difficulty),
 ): boolean {
   if (s.pending !== ev || s.status !== 'running') return false;
   const known = cfg.events[ev].choices.includes(choice) || (ev === 'storm' && choice === 'late');
@@ -257,7 +258,7 @@ export function useSpare(s: MissionState, target: RepairTarget): boolean {
 }
 
 /** Brush the dust off the solar panels (a chore: a little morale). */
-export function cleanDust(s: MissionState, cfg: Config = CONFIG): boolean {
+export function cleanDust(s: MissionState, cfg: Config = configFor(s.difficulty)): boolean {
   if (!s.effects.dust) return false;
   s.effects.dust = false;
   s.morale = clamp(s.morale + cfg.params.effects.cleanMorale, 0, cfg.params.morale.max);
@@ -265,7 +266,7 @@ export function cleanDust(s: MissionState, cfg: Config = CONFIG): boolean {
 }
 
 /** Pick fresh salad: a small morale boost, once the plants are grown (3-day cooldown). */
-export function harvest(s: MissionState, cfg: Config = CONFIG): boolean {
+export function harvest(s: MissionState, cfg: Config = configFor(s.difficulty)): boolean {
   const grown = s.greenhouseGrowth > (cfg.items.greenhouse.growDays ?? 0);
   if (!s.systems.greenhouse.present || !grown || s.harvestCooldown > 0) return false;
   s.harvestCooldown = 3;

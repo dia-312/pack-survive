@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ITEM_ORDER, SUGGESTED_CARGO, addItem, checkCargo, removeItem } from '../../engine/cargo';
-import { CONFIG } from '../../engine/config';
+import { CONFIG, configFor } from '../../engine/config';
 import { planCargo } from '../../engine/plan';
 import type { Cargo, ItemId } from '../../engine/types';
 import { ItemIcon, ResourceIcon, StatusIcon } from '../icons';
@@ -96,7 +96,7 @@ export function PackScreen() {
   const easy = useStore((s) => s.easy);
   const lastCargo = useStore((s) => s.lastCargo);
   const check = checkCargo(cargo);
-  const plan = useMemo(() => (check.mass > 0 ? planCargo(cargo) : null), [cargo, check.mass]);
+  const plan = useMemo(() => (check.mass > 0 ? planCargo(cargo, configFor(easy ? 'easy' : 'normal')) : null), [cargo, check.mass, easy]);
   const packed = ITEM_ORDER.filter((id) => (cargo[id] ?? 0) > 0);
 
   const lines: { key: string; vars?: Record<string, number>; tone: 'bad' | 'warn' }[] = [];

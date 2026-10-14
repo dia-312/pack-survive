@@ -62,6 +62,10 @@ export interface UIState {
   toasts: Toast[];
   nearby: ModuleId | null;
   landing: boolean;
+  /** subtitle key while the launch-to-landing cut-scene plays */
+  cutscene: string | null;
+  /** desktop: is the mouse captured for looking around? */
+  locked: boolean;
   radar: { key: string; vars?: Record<string, string | number> } | null;
   best: Best | null;
   answers: [string, string, string];
@@ -124,6 +128,8 @@ let state: UIState = {
   toasts: [],
   nearby: null,
   landing: false,
+  cutscene: null,
+  locked: false,
   radar: null,
   best: saved.best ?? null,
   answers: ['', '', ''],
