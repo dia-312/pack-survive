@@ -83,7 +83,90 @@ Facts live in `src/data/facts.json`, in Arabic and English, each with a real sou
 Where a source is a news page that repeats NASA material it is marked "secondary". Nothing is invented:
 the 100 mSv limit and the storm dose are *game rules* and are labelled that way (the real NASA career limit, 600 mSv, is a fact).
 
-<!--BALANCE-->
+## Balance report
+
+`npm run balance` plays **every cargo that fits in 20 mass units** (531,274 of them, using the per-item maximums in
+`items.json`) over **200 seeds** each with a simulated commander: sensible choices on every card, but
+hands-on tasks (run to the shelter, find the leak, scan the rock...) only succeed 85 % of the time, like a real kid.
+Use `npm run balance -- --seeds 20 --sample 4` for a quick look (about 20 seconds).
+That is 106 million missions in about 14 minutes on 4 cores. Output of the final build:
+
+```text
+Cargos within 20 mass: 531274. Seeds: 200. Threads: 4.
+Simulated 106,254,800 missions in 848.0 s.
+
+Summary (target in brackets)
+  blind random fill (any items, 224229 cargos):          0.3 %
+  random cargo (random fill that names power+air+water+food, 95023):  0.6 %   [20-30 %]
+  thoughtful cargo (checklist, 5 cargos):          82.1 %   [75-85 %]
+  best single cargo:                                  90.5 %   [no cargo above 95 %]
+  cargos above 95 %:                                  0   [0]
+  cargos with 75 %+ success:                          404 (reactor 199, solar+battery 205, no power plant 0, no generator 104)
+  cargos that never succeed:                          529975 of 531274
+
+Top 10 cargos
+   1.  90.5 %  mass 20  reactor×1 o2tank×6 recycler×1 food×4 excavator×1
+   2.  90.5 %  mass 20  battery×1 reactor×1 o2gen×1 recycler×1 watertank×2 food×4 excavator×1
+   3.  90.5 %  mass 20  reactor×1 o2gen×1 recycler×1 watertank×2 food×4 shield×1
+   4.  89.5 %  mass 20  reactor×1 o2gen×1 o2tank×1 recycler×1 watertank×2 food×4 greenhouse×1
+   5.  88.5 %  mass 20  reactor×1 o2gen×1 o2tank×1 recycler×1 watertank×2 food×5 shelter×1
+   6.  88.5 %  mass 17  reactor×1 o2gen×1 o2tank×1 recycler×1 watertank×2 food×4
+   7.  88.5 %  mass 18  reactor×1 o2gen×1 o2tank×1 recycler×1 watertank×2 food×4 spare×1
+   8.  88.5 %  mass 18  reactor×1 o2gen×1 o2tank×1 recycler×1 watertank×2 food×5
+   9.  88.5 %  mass 18  reactor×1 o2gen×1 o2tank×1 recycler×1 watertank×3 food×4
+  10.  88.5 %  mass 18  reactor×1 o2gen×1 o2tank×2 recycler×1 watertank×2 food×4
+
+How often each item appears in the top 10 cargos
+  solar                  0/10
+  battery     #          1/10
+  reactor     ########## 10/10
+  o2gen       #########  9/10
+  o2tank      ########   8/10
+  recycler    ########## 10/10
+  watertank   #########  9/10
+  food        ########## 10/10
+  greenhouse  #          1/10
+  shield      #          1/10
+  excavator   ##         2/10
+  shelter     #          1/10
+  spare       #          1/10
+
+How often each item appears in the best 0.1 % of cargos (531 cargos)
+  solar        62.3 %
+  battery      27.9 %
+  reactor      42.4 %
+  o2gen        72.7 %
+  o2tank       72.9 %
+  recycler     91.1 %
+  watertank    94.5 %
+  food        100.0 %
+  greenhouse    1.3 %
+  shield        0.4 %
+  excavator    10.9 %
+  shelter       9.2 %
+  spare        58.2 %
+```
+
+How to read it against the targets in the brief:
+
+| Target | Result | |
+|--------|--------|---|
+| No cargo above 95 % | best cargo **90.5 %**, 0 cargos above 95 % | met |
+| Thoughtful cargo 75-85 % | **82.1 %** (cargos that do the sums for power, air, water, food and have some storm cover) | met |
+| Random cargo 20-30 % | **0.6 %** for a random fill that names power + air + water + food (0.3 % for a blind fill) | **not met** |
+
+Why the random target is missed: with the consumption numbers in the brief (4 oxygen + 4 water + 4 food a day for 30 days,
+tanks and crates of 20) the *consumables alone* weigh about 18 of the 20 mass units, so a random
+cargo almost never has enough of everything. We kept the brief's numbers on purpose (that tension *is* the lesson "every
+kilogram counts") and instead made the puzzle approachable: Radar's plan check on the pack screen runs a quiet dry-run mission
+and tells the kid which supply runs short and on which day, Easy mode offers a cargo that works, and a failed cargo ends within
+days, so a retry is fast. If you want a gentler random-play rate, the knobs are the tank/crate sizes in `src/data/items.json`
+(doubling them gives roughly 10 % for random cargos) and the health penalties in `params.json`; rerun `npm run balance` after changing them.
+
+What the best cargos look like: a reactor (power day and night, so the dark days cost nothing), an oxygen generator or oxygen tanks,
+a recycler, enough water and 4-5 food crates, plus one safety item (excavator, ready-made shield, shelter or a spare part).
+Solar + 3 batteries also works but is more fragile (dust, micrometeoroids, the 3-day dark spells).
+
 
 ## Accessibility
 Status is always icon + color + shape (never color alone). Touch targets are at least 44 px.
